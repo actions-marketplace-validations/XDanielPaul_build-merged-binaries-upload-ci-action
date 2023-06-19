@@ -1,0 +1,45 @@
+name: Composite Action for Building and Uploading Binaries
+description: 'Builds and uploads binaries to release'
+
+inputs:
+  tag:
+    description: 'Tag name'
+    required: true
+  path:
+    description: 'Path to directory where to build binaries'
+    required: true
+  sdk_config:
+    description: 'SDK config'
+    required: false
+    default: "sdkconfig.defaults"
+  github_token:
+    description: 'GitHub token'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get Env variables
+      run: echo "TAG_NAME=${{ inputs.tag }}" >> $GITHUB_ENV
+
+    - name: Build examples
+      run: |
+        export IDF_EXTRA_ACTIONS_PATH=${GITHUB_WORKSPACE}/examples
+        . ${IDF_PATH}/export.sh
+        pip install rtoml idf-component-manager ruamel.yaml idf-build-apps==0.5.0 --upgrade
+        idf-build-apps build -p "${{ inputs.path }}" --recursive --collect-app-info out.json --config {{ inputs.sdk_config }} --target all --build-dir "build_@w" --check-warnings
+        cat out.json
+        python .github/workflows/mergeBinaries.py out.json
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ inputs.github_token }}
+        file: binaries/*
+        tag: ${{ env.TAG_NAME }}
+        overwrite: true
+        file_glob: true
+
+branding:
+  icon: 'package'
+  color: 'blue'
