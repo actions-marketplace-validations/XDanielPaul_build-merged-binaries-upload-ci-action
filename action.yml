@@ -20,9 +20,11 @@ runs:
   using: 'composite'
   steps:
     - name: Get Env variables
+      shell: bash
       run: echo "TAG_NAME=${{ inputs.tag }}" >> $GITHUB_ENV
 
     - name: Build examples
+      shell: bash
       run: |
         export IDF_EXTRA_ACTIONS_PATH=${GITHUB_WORKSPACE}/examples
         . ${IDF_PATH}/export.sh

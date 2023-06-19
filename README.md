@@ -20,7 +20,7 @@ Name of the sdkconfig file.
 
 ```yaml
 - name: Build and upload binaries
-  uses: XDanielPaul/build-merge-upload-binaries-ci-action@v1.0
+  uses: XDanielPaul/build-merged-binaries-upload-ci-action@v1.1
   with:
     tag: ${{ github.ref }}
     path: "examples"
