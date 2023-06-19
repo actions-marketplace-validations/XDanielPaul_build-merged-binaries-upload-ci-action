@@ -1,4 +1,4 @@
-name: Composite Action for Building and Uploading Binaries
+name: Action for Building and Uploading Binaries
 description: 'Builds and uploads binaries to release'
 
 inputs:
